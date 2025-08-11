@@ -1,5 +1,5 @@
--- CREATE DATABASE IF NOT EXISTS weberpdemo;
-USE webshop50;
+CREATE DATABASE IF NOT EXISTS weberpdemo;
+USE weberpdemo;
 SET FOREIGN_KEY_CHECKS = 0;
 -- MySQL dump 10.16  Distrib 10.1.44-MariaDB, for debian-linux-gnu (x86_64)
 --
@@ -1808,14 +1808,13 @@ CREATE TABLE `pickserialdetails` (
   `detailno` int(11) NOT NULL DEFAULT '1',
   `stockid` varchar(20) NOT NULL DEFAULT '',
   `serialno` varchar(30) NOT NULL DEFAULT '',
-  `loccode` varchar(5) NOT NULL DEFAULT '',
   `moveqty` double NOT NULL DEFAULT '0',
   PRIMARY KEY (`serialmoveid`),
   KEY `detailno` (`detailno`),
   KEY `stockid` (`stockid`,`serialno`),
   KEY `serialno` (`serialno`),
   CONSTRAINT `pickserialdetails_ibfk_1` FOREIGN KEY (`detailno`) REFERENCES `pickreqdetails` (`detailno`),
-  CONSTRAINT `pickserialdetails_ibfk_2` FOREIGN KEY (`stockid`, `serialno`,`loccode`) REFERENCES `stockserialitems` (`stockid`, `serialno`,`loccode`)
+  CONSTRAINT `pickserialdetails_ibfk_2` FOREIGN KEY (`stockid`, `serialno`) REFERENCES `stockserialitems` (`stockid`, `serialno`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2031,7 +2030,6 @@ CREATE TABLE `purchorders` (
 CREATE TABLE `qasamples` (
   `sampleid` int(11) NOT NULL AUTO_INCREMENT,
   `prodspeckey` varchar(25) NOT NULL DEFAULT '',
-  `prodtestid` int(11) NOT NULL,
   `lotkey` varchar(25) NOT NULL DEFAULT '',
   `identifier` varchar(10) NOT NULL DEFAULT '',
   `createdby` varchar(15) NOT NULL DEFAULT '',
@@ -2040,7 +2038,7 @@ CREATE TABLE `qasamples` (
   `cert` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`sampleid`),
   KEY `prodspeckey` (`prodspeckey`,`lotkey`),
-  CONSTRAINT `qasamples_ibfk_1` FOREIGN KEY (`prodspeckey`,`prodtestid`) REFERENCES `prodspecs` (`keyval`,`testid`)
+  CONSTRAINT `qasamples_ibfk_1` FOREIGN KEY (`prodspeckey`) REFERENCES `prodspecs` (`keyval`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3029,14 +3027,13 @@ CREATE TABLE `stockserialmoves` (
   `stockmoveno` int(11) NOT NULL DEFAULT '0',
   `stockid` varchar(20) NOT NULL DEFAULT '',
   `serialno` varchar(30) NOT NULL DEFAULT '',
-  `loccode` varchar(5) NOT NULL DEFAULT '',
   `moveqty` double NOT NULL DEFAULT '0',
   PRIMARY KEY (`stkitmmoveno`),
   KEY `StockMoveNo` (`stockmoveno`),
   KEY `StockID_SN` (`stockid`,`serialno`),
   KEY `serialno` (`serialno`),
   CONSTRAINT `stockserialmoves_ibfk_1` FOREIGN KEY (`stockmoveno`) REFERENCES `stockmoves` (`stkmoveno`),
-  CONSTRAINT `stockserialmoves_ibfk_2` FOREIGN KEY (`stockid`, `serialno`, `loccode`) REFERENCES `stockserialitems` (`stockid`, `serialno`, `loccode`)
+  CONSTRAINT `stockserialmoves_ibfk_2` FOREIGN KEY (`stockid`, `serialno`) REFERENCES `stockserialitems` (`stockid`, `serialno`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -19690,8 +19687,8 @@ INSERT INTO `workorders` VALUES (37,'MEL','2016-10-19','2016-10-19',0,0,NULL,'',
 -- Dumping data for table `www_users`
 --
 
-INSERT INTO `www_users` VALUES ('admin','$2y$10$Q8HLC/2rQaB5NcCcK6V6ZOQG3chIsx16mKtZRoSaUsU9okMBDbUwG','Demonstration user','','','','','admin@weberp.org','MEL',8,1,'2018-10-28 21:38:56','','A4',5,'1,1,1,1,1,1,1,1,1,1,1,',0,1,1,0,50,'xenos','en_GB.utf8',0,1,0);
-INSERT INTO `www_users` VALUES ('WEB0000021','$2y$10$aTt/treAhiVVd0mPw1Ums.GcOxBtX/3cIsD1RL//0iT3QUYjvIDlS','Phil Daintree','WEB0000021','','','1234564','phil@logicworks.co.nz','TOR',7,0,NULL,'WEB0000021','A4',5,'1,0,0,0,0,0,0,0,0,0,0',0,1,1,0,30,'','en_GB.utf8',0,1,0);
+INSERT INTO `www_users` VALUES ('admin','$2y$10$Q8HLC/2rQaB5NcCcK6V6ZOQG3chIsx16mKtZRoSaUsU9okMBDbUwG','Demonstration user','','','','','admin@weberp.org','MEL',8,1,'2018-10-28 21:38:56','','A4','1,1,1,1,1,1,1,1,1,1,1,',0,1,1,0,50,'xenos','en_GB.utf8',0,0);
+INSERT INTO `www_users` VALUES ('WEB0000021','$2y$10$aTt/treAhiVVd0mPw1Ums.GcOxBtX/3cIsD1RL//0iT3QUYjvIDlS','Phil Daintree','WEB0000021','','','1234564','phil@logicworks.co.nz','TOR',7,0,NULL,'WEB0000021','A4','1,0,0,0,0,0,0,0,0,0,0',0,1,1,0,30,'','en_GB.utf8',0,0);
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
