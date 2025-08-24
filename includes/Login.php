@@ -127,7 +127,7 @@ echo '<label for="username">', _('User name'), ':</label>
 	<div id="demo_text">';
 
 if (isset($DemoText)) {
-	echo $DemoText;
+	//echo $DemoText;
 }
 
 echo '</div>';
