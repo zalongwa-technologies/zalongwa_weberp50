@@ -13,7 +13,7 @@ margin:0;
 padding:0;
 text-align:center
 }
-@media only screen and (min-width: 301px) {
+@media only screen and (min-width: 401px) {
 #container {
 border:solid var(--border_colour) 1px;
 border-radius:15px;
@@ -21,7 +21,7 @@ margin:90px auto 0;
 opacity:1.0;
 padding:10px 0 36px;
 text-align:left;
-width:65%;
+width:45%;
 z-index:1000
 }
 #login_box {
