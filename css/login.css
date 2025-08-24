@@ -13,7 +13,7 @@ margin:0;
 padding:0;
 text-align:center
 }
-@media only screen and (min-width: 401px) {
+@media only screen and (min-width: 301px) {
 #container {
 border:solid var(--border_colour) 1px;
 border-radius:15px;
