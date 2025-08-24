@@ -31,7 +31,7 @@ echo '</head>';
 echo '<body>
 	<div id="container">
 		<div id="login_logo">
-			<div class="logo logo-left">ZalongwaWeb</div><div class="logo logo-right">ERP</div>
+			<div class="logo logo-left">Zalongwa</div><div class="logo logo-right">ERP</div>
 		</div>
 		<div id="login_box">
 			<form action="' . $RootPath . '/index.php" name="LogIn" method="post" class="noPrint">
