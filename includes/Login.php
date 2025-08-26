@@ -30,8 +30,16 @@ echo '</head>';
 
 echo '<body>
 	<div id="container">
-		<div id="login_logo">
-			<div class="logo logo-left">Zalongwa</div><div class="logo logo-right">ERP</div>
+		<div id="login_logo">';
+		    if ($AllowCompanySelectionBox == 'Hide'){
+		       //insert company logo
+				if (file_exists('companies/' . $CompanyEntry . '/logo.png')) {
+					echo '<li class="option" id="' . $CompanyEntry . '" ><img id="optionlogo" src="companies/' . $CompanyEntry . '/logo.png" /><span id="optionlabel">', $CompanyName[$CompanyEntry], '</span></li>';
+				} else if (file_exists('companies/' . $CompanyEntry . '/logo.jpg')) {
+					echo '<li class="option" id="' . $CompanyEntry . '" ><img id="optionlogo" src="companies/' . $CompanyEntry . '/logo.jpg" /><span id="optionlabel">', $CompanyName[$CompanyEntry], '</span></li>';
+				}
+			}
+echo '<div class="logo logo-left">Zalongwa</div><div class="logo logo-right">ERP</div>
 		</div>
 		<div id="login_box">
 			<form action="' . $RootPath . '/index.php" name="LogIn" method="post" class="noPrint">
