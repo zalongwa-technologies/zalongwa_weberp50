@@ -40,6 +40,7 @@ echo '<body>
 				}else{
 					echo 'company logo comes here';
 				}
+				echo '<br><br>';
 			}
 echo '<div class="logo logo-left">Zalongwa</div><div class="logo logo-right">ERP</div>
 		</div>
