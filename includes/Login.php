@@ -30,8 +30,7 @@ echo '</head>';
 
 echo '<body>
 	<div id="container">
-		<div id="login_logo">
-		<div class="logo logo-left">';
+		<div id="login_logo">';
 		    if ($AllowCompanySelectionBox == 'Hide'){
 		       //insert company logo
 				if (file_exists('companies/' . $CompanyEntry . '/logo.png')) {
@@ -43,7 +42,7 @@ echo '<body>
 				}
 				echo '<br><br>';
 			}
-echo '</div><div class="logo logo-left">Zalongwa</div><div class="logo logo-right">ERP</div>
+echo '<div class="logo logo-left">Zalongwa</div><div class="logo logo-right">ERP</div>
 		</div>
 		<div id="login_box">
 			<form action="' . $RootPath . '/index.php" name="LogIn" method="post" class="noPrint">
