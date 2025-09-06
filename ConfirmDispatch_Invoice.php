@@ -100,7 +100,6 @@ if (!isset($_GET['OrderNumber']) and !isset($_SESSION['ProcessingOrder'])) {
 	if ($_SESSION['SalesmanLogin'] != '') {
 //		$OrderHeaderSQL.= " AND salesorders.salesperson='" . $_SESSION['SalesmanLogin'] . "'";
 	}
-echo "Niko Mstari wa 103 <br>".$OrderHeaderSQL;
 
 	$ErrMsg = __('The order cannot be retrieved because');
 	$GetOrdHdrResult = DB_query($OrderHeaderSQL, $ErrMsg);
