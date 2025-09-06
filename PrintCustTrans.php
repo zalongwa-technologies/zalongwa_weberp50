@@ -160,8 +160,7 @@ if (isset($PrintPDF)
 						ON debtorsmaster.currcode=currencies.currabrev
 						WHERE debtortrans.type=10
 						AND debtortrans.transno='" . $FromTransNo . "'";
-echo "line 163: ".$SQL;
-exit;
+
 			if(isset($_POST['PrintEDI']) AND $_POST['PrintEDI']=='No') {
 				$SQL = $SQL . ' AND debtorsmaster.ediinvoices=0';
 			}
