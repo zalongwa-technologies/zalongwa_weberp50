@@ -177,6 +177,8 @@ if(isset($_POST['Update'])
 		if(!isset($_POST['DeliveryDays'])) {
 			$_POST['DeliveryDays']=0;
 		}
+		echo "Angalia hii: ".$MyRow[6];
+		exit;
 		if(!isset($_SESSION['Items'.$identifier])) {
 			$MyRow = DB_fetch_row($Result);
 			$_SESSION['Items'.$identifier]->DeliverTo = $MyRow[0];
