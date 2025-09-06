@@ -38,9 +38,9 @@ echo '<body>
 				} else if (file_exists('companies/' . $CompanyEntry . '/logo.jpg')) {
 					echo '<li class="option" id="' . $CompanyEntry . '" ><img id="optionlogo" src="companies/' . $CompanyEntry . '/logo.jpg" /><span id="optionlabel">', $CompanyName[$CompanyEntry], '</span></li>';
 				}else{
-					echo 'company logo comes here';
+					//echo 'company logo comes here';
 				}
-				echo '<br><br>';
+			//	echo '<br><br>';
 			}
 echo '<div class="logo logo-left">Zalongwa</div><div class="logo logo-right">ERP</div>
 		</div>
