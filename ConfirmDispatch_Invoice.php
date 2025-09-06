@@ -148,12 +148,12 @@ if (!isset($_GET['OrderNumber']) and !isset($_SESSION['ProcessingOrder'])) {
 		$_SESSION['Items' . $identifier]->DispatchTaxProvince = $MyRow['taxprovinceid'];
 		$_SESSION['Items' . $identifier]->GetFreightTaxes();
 		$_SESSION['Items' . $identifier]->SpecialInstructions = $MyRow['specialinstructions'];
-
+echo "Niko Mstari wa 151 <br>".$MyRow['name'];;
+exit;
 		DB_free_result($GetOrdHdrResult);
 
 		/*now populate the line items array with the sales order details records */
-echo "Niko Mstari wa 155 <br>".$MyRow['name'];;
-exit;
+
 		$LineItemsSQL = "SELECT stkcode,
 								stockmaster.description,
 								stockmaster.longdescription,
