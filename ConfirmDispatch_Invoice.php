@@ -138,8 +138,7 @@ if (!isset($_GET['OrderNumber']) and !isset($_SESSION['ProcessingOrder'])) {
 		$_SESSION['Items' . $identifier]->PhoneNo = $MyRow['contactphone'];
 		$_SESSION['Items' . $identifier]->Email = $MyRow['contactemail'];
 		$_SESSION['Items' . $identifier]->SalesPerson = $MyRow['salesperson'];
-		echo "Niko Mstari wa 141 <br>".$MyRow['name'];;
-exit;
+
 		$_SESSION['Items' . $identifier]->Location = $MyRow['fromstkloc'];
 		$_SESSION['Items' . $identifier]->FreightCost = $MyRow['freightcost'];
 		$_SESSION['Old_FreightCost'] = $MyRow['freightcost'];
@@ -148,6 +147,8 @@ exit;
 		$_SESSION['CurrencyRate'] = $MyRow['currency_rate'];
 		$_SESSION['Items' . $identifier]->TaxGroup = $MyRow['taxgroupid'];
 		$_SESSION['Items' . $identifier]->DispatchTaxProvince = $MyRow['taxprovinceid'];
+				echo "Niko Mstari wa 150 <br>".$MyRow['name'];;
+exit;
 		$_SESSION['Items' . $identifier]->GetFreightTaxes();
 		$_SESSION['Items' . $identifier]->SpecialInstructions = $MyRow['specialinstructions'];
 
