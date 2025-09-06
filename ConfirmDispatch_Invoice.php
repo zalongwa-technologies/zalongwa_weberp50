@@ -103,7 +103,8 @@ if (!isset($_GET['OrderNumber']) and !isset($_SESSION['ProcessingOrder'])) {
 
 	$ErrMsg = __('The order cannot be retrieved because');
 	$GetOrdHdrResult = DB_query($OrderHeaderSQL, $ErrMsg);
-
+echo "Niko Mstari wa 106 <br>".$GetOrdHdrResult;
+exit;
 	if (DB_num_rows($GetOrdHdrResult) == 1) {
 
 		$MyRow = DB_fetch_array($GetOrdHdrResult);
@@ -180,8 +181,7 @@ if (!isset($_GET['OrderNumber']) and !isset($_SESSION['ProcessingOrder'])) {
 							WHERE salesorderdetails.orderno ='" . $_GET['OrderNumber'] . "'
 							AND salesorderdetails.quantity - salesorderdetails.qtyinvoiced >0
 							ORDER BY salesorderdetails.orderlineno";
-echo "Niko Mstari wa 183 <br>".$LineItemsSQL;
-exit;
+
 		$ErrMsg = __('The line items of the order cannot be retrieved because');
 		$LineItemsResult = DB_query($LineItemsSQL, $ErrMsg);
 
