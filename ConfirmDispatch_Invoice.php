@@ -148,7 +148,7 @@ if (!isset($_GET['OrderNumber']) and !isset($_SESSION['ProcessingOrder'])) {
 		$_SESSION['Items' . $identifier]->TaxGroup = $MyRow['taxgroupid'];
 		$_SESSION['Items' . $identifier]->DispatchTaxProvince = $MyRow['taxprovinceid'];
 
-		//$_SESSION['Items' . $identifier]->GetFreightTaxes(); (nimefuta)
+		$_SESSION['Items' . $identifier]->GetFreightTaxes();
 		$_SESSION['Items' . $identifier]->SpecialInstructions = $MyRow['specialinstructions'];
 
 		DB_free_result($GetOrdHdrResult);
