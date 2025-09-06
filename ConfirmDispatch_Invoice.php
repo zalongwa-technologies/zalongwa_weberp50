@@ -122,8 +122,7 @@ if (!isset($_GET['OrderNumber']) and !isset($_SESSION['ProcessingOrder'])) {
 		$_SESSION['Items' . $identifier]->InternalComments = reverse_escape($MyRow['internalcomment']);
 		$_SESSION['Items' . $identifier]->Consignment = $MyRow['consignment'];
 		$_SESSION['Items' . $identifier]->Packages = $MyRow['packages'];
-echo "Niko Mstari wa 125 <br>".$MyRow['name'];;
-exit;
+
 		if (is_null($BestShipper)) {
 			$BestShipper = 0;
 		}
@@ -153,7 +152,8 @@ exit;
 		DB_free_result($GetOrdHdrResult);
 
 		/*now populate the line items array with the sales order details records */
-
+echo "Niko Mstari wa 155 <br>".$MyRow['name'];;
+exit;
 		$LineItemsSQL = "SELECT stkcode,
 								stockmaster.description,
 								stockmaster.longdescription,
