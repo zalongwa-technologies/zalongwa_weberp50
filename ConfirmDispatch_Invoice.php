@@ -98,12 +98,15 @@ if (!isset($_GET['OrderNumber']) and !isset($_SESSION['ProcessingOrder'])) {
 						WHERE salesorders.orderno = '" . $_GET['OrderNumber'] . "'";
 
 	if ($_SESSION['SalesmanLogin'] != '') {
-		$OrderHeaderSQL.= " AND salesorders.salesperson='" . $_SESSION['SalesmanLogin'] . "'";
+//		$OrderHeaderSQL.= " AND salesorders.salesperson='" . $_SESSION['SalesmanLogin'] . "'";
 	}
 echo "Niko Mstari wa 103 <br>".$OrderHeaderSQL;
-exit;
+
 	$ErrMsg = __('The order cannot be retrieved because');
 	$GetOrdHdrResult = DB_query($OrderHeaderSQL, $ErrMsg);
+
+echo "Niko Mstari wa 108 <br>".DB_num_rows($GetOrdHdrResult);
+exit;
 
 	if (DB_num_rows($GetOrdHdrResult) == 1) {
 
