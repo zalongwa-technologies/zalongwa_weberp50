@@ -353,8 +353,6 @@ Class Cart {
 			ORDER BY taxgrouptaxes.calculationorder";
 
 		$ErrMsg = _('The taxes and rates for this item could not be retrieved because');
-		echo "Line 356 <br>".$SQL;
-exit;
 		$GetTaxRatesResult = DB_query($SQL, $ErrMsg);
 		unset($this->LineItems[$LineNumber]->Taxes);
 		if (DB_num_rows($GetTaxRatesResult)==0){
