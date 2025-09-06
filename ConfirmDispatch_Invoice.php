@@ -25,7 +25,8 @@ if (empty($_GET['identifier'])) {
 } else {
 	$identifier = $_GET['identifier'];
 }
-
+echo "Niko Mstari wa 28";
+exit;
 if (!isset($_GET['OrderNumber']) and !isset($_SESSION['ProcessingOrder'])) {
 	/* This page can only be called with an order number for invoicing*/
 	echo '<div class="centre">
