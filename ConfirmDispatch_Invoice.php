@@ -122,11 +122,12 @@ if (!isset($_GET['OrderNumber']) and !isset($_SESSION['ProcessingOrder'])) {
 		$_SESSION['Items' . $identifier]->InternalComments = reverse_escape($MyRow['internalcomment']);
 		$_SESSION['Items' . $identifier]->Consignment = $MyRow['consignment'];
 		$_SESSION['Items' . $identifier]->Packages = $MyRow['packages'];
-echo "Niko Mstari wa 125 <br>".$MyRow['name'];;
-exit;
+
 		if (is_null($BestShipper)) {
 			$BestShipper = 0;
 		}
+		echo "Niko Mstari wa 129 <br>".$MyRow['name'];;
+exit;
 		$_SESSION['Items' . $identifier]->DeliverTo = $MyRow['deliverto'];
 		$_SESSION['Items' . $identifier]->DeliveryDate = ConvertSQLDate($MyRow['deliverydate']);
 		$_SESSION['Items' . $identifier]->BrAdd1 = $MyRow['deladd1'];
