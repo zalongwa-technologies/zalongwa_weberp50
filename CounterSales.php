@@ -102,6 +102,8 @@ if (!isset($_SESSION['Items'.$identifier])) {
 		$_SESSION['Items'.$identifier]->LocationName = $MyRow['locationname'];
 		$_SESSION['Items'.$identifier]->Location = $_SESSION['UserStockLocation'];
 		$_SESSION['Items'.$identifier]->DispatchTaxProvince = $MyRow['taxprovinceid'];
+echo "Tax Province: <br>".$MyRow['taxprovinceid'];
+exit;
 
 		// Now check to ensure this account exists and set defaults */
 		$SQL = "SELECT debtorsmaster.name,
