@@ -105,8 +105,7 @@ if (!isset($_GET['OrderNumber']) and !isset($_SESSION['ProcessingOrder'])) {
 	$GetOrdHdrResult = DB_query($OrderHeaderSQL, $ErrMsg);
 
 	if (DB_num_rows($GetOrdHdrResult) == 1) {
-echo "Niko Mstari wa 109 (ndani ya moja <br>".DB_num_rows($GetOrdHdrResult);
-exit;
+
 		$MyRow = DB_fetch_array($GetOrdHdrResult);
 
 		$_SESSION['Items' . $identifier]->DebtorNo = $MyRow['debtorno'];
@@ -123,7 +122,8 @@ exit;
 		$_SESSION['Items' . $identifier]->InternalComments = reverse_escape($MyRow['internalcomment']);
 		$_SESSION['Items' . $identifier]->Consignment = $MyRow['consignment'];
 		$_SESSION['Items' . $identifier]->Packages = $MyRow['packages'];
-
+echo "Niko Mstari wa 125 <br>".$MyRow['name'];;
+exit;
 		if (is_null($BestShipper)) {
 			$BestShipper = 0;
 		}
