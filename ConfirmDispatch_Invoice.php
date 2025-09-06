@@ -126,8 +126,7 @@ if (!isset($_GET['OrderNumber']) and !isset($_SESSION['ProcessingOrder'])) {
 		if (is_null($BestShipper)) {
 			$BestShipper = 0;
 		}
-		echo "Niko Mstari wa 129 <br>".$MyRow['name'];;
-exit;
+
 		$_SESSION['Items' . $identifier]->DeliverTo = $MyRow['deliverto'];
 		$_SESSION['Items' . $identifier]->DeliveryDate = ConvertSQLDate($MyRow['deliverydate']);
 		$_SESSION['Items' . $identifier]->BrAdd1 = $MyRow['deladd1'];
@@ -139,7 +138,8 @@ exit;
 		$_SESSION['Items' . $identifier]->PhoneNo = $MyRow['contactphone'];
 		$_SESSION['Items' . $identifier]->Email = $MyRow['contactemail'];
 		$_SESSION['Items' . $identifier]->SalesPerson = $MyRow['salesperson'];
-
+		echo "Niko Mstari wa 141 <br>".$MyRow['name'];;
+exit;
 		$_SESSION['Items' . $identifier]->Location = $MyRow['fromstkloc'];
 		$_SESSION['Items' . $identifier]->FreightCost = $MyRow['freightcost'];
 		$_SESSION['Old_FreightCost'] = $MyRow['freightcost'];
