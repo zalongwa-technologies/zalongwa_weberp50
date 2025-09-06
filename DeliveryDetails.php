@@ -177,8 +177,7 @@ if(isset($_POST['Update'])
 		if(!isset($_POST['DeliveryDays'])) {
 			$_POST['DeliveryDays']=0;
 		}
-		echo "Angalia hii: ".$MyRow[6];
-		exit;
+
 		if(!isset($_SESSION['Items'.$identifier])) {
 			$MyRow = DB_fetch_row($Result);
 			$_SESSION['Items'.$identifier]->DeliverTo = $MyRow[0];
@@ -394,6 +393,8 @@ if(isset($OK_to_PROCESS) AND $OK_to_PROCESS == 1 AND $_SESSION['ExistingOrder'.$
 								)";
 
 	$ErrMsg = __('The order cannot be added because');
+	echo "<br> The query is: ".$HeaderSQL;
+	exit;
 	$InsertQryResult = DB_query($HeaderSQL, $ErrMsg);
 
 
