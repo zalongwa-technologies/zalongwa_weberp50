@@ -839,6 +839,8 @@ if (isset($_POST['ProcessInvoice']) and $_POST['ProcessInvoice'] != '') {
 									'" . $_SESSION['Items' . $identifier]->SalesPerson . "' )";
 
 	$ErrMsg = _('CRITICAL ERROR') . '! ' . _('NOTE DOWN THIS ERROR AND SEEK ASSISTANCE') . ': ' . _('The debtor transaction record could not be inserted because');
+	echo "check this: ".$SQL ;
+	exit;
 	$Result = DB_query($SQL, $ErrMsg, '', true);
 	$DebtorTransID = DB_Last_Insert_ID('debtortrans', 'id');
 
