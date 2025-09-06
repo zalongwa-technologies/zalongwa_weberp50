@@ -78,6 +78,8 @@ if (!isset($_SESSION['Items'.$identifier])) {
 				taxprovinceid
 			FROM locations
 			WHERE loccode='" . $_SESSION['UserStockLocation'] ."'";
+echo "Line 81 <br>".$SQL;
+exit;
 	$Result = DB_query($SQL);
 	if (DB_num_rows($Result)==0) {
 		prnMsg(_('Your user account does not have a valid default inventory location set up. Please see the system administrator to modify your user account.'),'error');
@@ -102,8 +104,7 @@ if (!isset($_SESSION['Items'.$identifier])) {
 		$_SESSION['Items'.$identifier]->LocationName = $MyRow['locationname'];
 		$_SESSION['Items'.$identifier]->Location = $_SESSION['UserStockLocation'];
 		$_SESSION['Items'.$identifier]->DispatchTaxProvince = $MyRow['taxprovinceid'];
-echo "Tax Province: <br>".$MyRow['taxprovinceid'];
-exit;
+
 
 		// Now check to ensure this account exists and set defaults */
 		$SQL = "SELECT debtorsmaster.name,
