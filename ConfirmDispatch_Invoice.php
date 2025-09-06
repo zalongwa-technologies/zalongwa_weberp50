@@ -1,6 +1,7 @@
 <?php
 /* Creates sales invoices from entered sales orders based on the quantities dispatched that can be modified */
-
+echo "check this: ".$SQL ;
+	exit;
 include('includes/DefineCartClass.php');
 include('includes/DefineSerialItems.php');
 
@@ -758,8 +759,7 @@ if (isset($_POST['ProcessInvoice']) and $_POST['ProcessInvoice'] != '') {
 			exit();
 		}
 	} /*loop through all line items of the order to ensure none have been invoiced since started looking at this order*/
-echo "check this: ".$SQL ;
-	exit;
+
 	DB_free_result($Result);
 
 	// *************************************************************************
