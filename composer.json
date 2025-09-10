@@ -14,7 +14,7 @@
 	],
 	"_note": "the mysqli extension is required by the installer. Once we add to it support for mysql and pdo, it can be demoted to suggested",
 	"require": {
-		"php": "^8.1",
+		"php": "^8.3",
 		"ext-ctype": "*",
 		"ext-mbstring": "*",
 		"ext-mysqli": "*",
@@ -48,7 +48,7 @@
 	"_comment_2": "Since we ship dependecies, force Composer not to download anything which requires a bigger php version",
 	"config": {
 		"platform": {
-			"php": "8.1.0"
+			"php": "8.3.6"
 		}
 	}
 }
