@@ -1,4 +1,5 @@
 <?php
+
 include ("phpxmlrpc/lib/xmlrpc.inc");
 $ServerURL = "https://zerp.saris.info.tz/api/api_xml-rpc.php";
 $Parameters["StockID"] = new xmlrpcval("ST001");
