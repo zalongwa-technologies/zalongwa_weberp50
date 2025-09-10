@@ -4,7 +4,7 @@
 
 	// FOLLOWING IS ALWAYS REQUIRED
 
-	$api_DatabaseName = 'weberpdemo';
+	$api_DatabaseName = 'zalongwa_weberp';
 	if (isset($_SESSION['DatabaseName'])) {
 		$api_DatabaseName = $_SESSION['DatabaseName'];
 	}
