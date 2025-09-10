@@ -1,14 +1,12 @@
 <?php
-
 include ("phpxmlrpc/lib/xmlrpc.inc");
-
 $ServerURL = "https://zerp.saris.info.tz/api/api_xml-rpc.php";
-
+echo 'line 10: niko hapa: ==> '.$Msg;
+exit;
 $Parameters["StockID"] = new xmlrpcval("ST001");
 $Parameters["Username"] = new xmlrpcval("leah");
 $Parameters["Password"] = new xmlrpcval("zalongwa");
-echo 'line 10: niko hapa: ==> '.$Msg;
-exit;
+
 $Msg = new xmlrpcmsg(".xmlrpc_GetStockBalance", $Parameters);
 $Client = new xmlrpc_client($ServerURL);
 $Response = $Client->send($Msg);
