@@ -1,9 +1,10 @@
 <?php
 
 include ("phpxmlrpc/lib/xmlrpc.inc");
-echo 'line 2: niko hapa';
-exit;
+
 $ServerURL = "https://zerp.saris.info.tz/api/api_xml-rpc.php";
+echo 'line 6: niko hapa';
+exit;
 $Parameters["StockID"] = new xmlrpcval("ST001");
 $Parameters["Username"] = new xmlrpcval("leah");
 $Parameters["Password"] = new xmlrpcval("zalongwa");
