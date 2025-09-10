@@ -16,7 +16,8 @@ $paramStruct = new xmlrpcval(array(
 
 // Build message (no leading dot)
 $Msg = new xmlrpcmsg("xmlrpc_GetStockBalance", array($paramStruct));
-
+print_r($Msg);
+exit;
 // Client
 $Client = new xmlrpc_client($ServerURL);
 
