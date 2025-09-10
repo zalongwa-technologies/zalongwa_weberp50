@@ -16,8 +16,7 @@ $paramStruct = new xmlrpcval(array(
 
 // Build message (no leading dot)
 $Msg = new xmlrpcmsg("xmlrpc_GetStockBalance", array($paramStruct));
-print_r($Msg);
-exit;
+
 // Client
 $Client = new xmlrpc_client($ServerURL);
 
@@ -30,7 +29,8 @@ $Client->setDebug(2);
 
 // Send
 $Response = $Client->send($Msg);
-
+print_r($Response);
+exit;
 // Transport errors?
 if (!$Response) {
     die("No response from server");
