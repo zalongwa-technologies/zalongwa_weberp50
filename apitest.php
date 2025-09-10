@@ -1,5 +1,6 @@
 <?php
-error_reporting(E_ALL && ~E_NOTICE);
+error_reporting(E_ALL ^ E_NOTICE);  // or: error_reporting(E_ALL & ~E_NOTICE);
+ini_set('display_errors', 1);        // (temporarily, while debugging)
 include ("phpxmlrpc/lib/xmlrpc.inc");
 $ServerURL = "https://zerp.saris.info.tz/api/api_xml-rpc.php";
 $Parameters = array();
