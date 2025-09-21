@@ -3756,6 +3756,10 @@ return array(
 		"function" => "xmlrpc_InsertSupplier",
 		"signature" => $InsertSupplier_sig,
 		"docstring" => $InsertSupplier_doc),
+	"weberp.xmlrpc_InsertSupplierInvoice" => array(
+		"function" => "xmlrpc_InsertSupplierInvoice",
+		"signature" => $InsertSupplierInvoice_sig,
+		"docstring" => $InsertSupplierInvoice_doc),
 	"weberp.xmlrpc_ModifySupplier" => array(
 		"function" => "xmlrpc_ModifySupplier",
 		"signature" => $ModifySupplier_sig,
