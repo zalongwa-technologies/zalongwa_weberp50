@@ -17,3 +17,6 @@ Thumbs.db
 
 # And the eventual .git dir from composer-installed projects which are downloaded as git clones
 /vendor/phplot/phplot/.git/
+
+.DS_Store
+*.DS_Store

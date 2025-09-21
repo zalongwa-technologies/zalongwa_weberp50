@@ -350,3 +350,53 @@
 		}
 		return $SupplierList;
 	}
+	function InsertSupplierInvoice($InvoiceDetails, $user, $password) {
+				$Errors = array();
+		$db = db($user, $password);
+		if (gettype($db)=='integer') {
+			$Errors[0]=NoAuthorisation;
+			return $Errors;
+		}
+		foreach ($InvoiceDetails as $key => $Value) {
+			$InvoiceDetails[$key] = DB_escape_string($Value);
+		}
+		/*
+		$autonumbersql="SELECT confvalue FROM config
+						 WHERE confname='AutoDebtorNo'";
+		$autonumberresult=DB_query($autonumbersql);
+		$autonumber=DB_fetch_row($autonumberresult);
+		if ($autonumber[0]==0) {
+			$Errors=VerifyDebtorNo($CustomerDetails['debtorno'], sizeof($Errors), $Errors);
+		} else {
+			$CustomerDetails['debtorno']='';
+		}
+		*/
+		$Errors=VerifySupplierNo($InvoiceDetails['supplierid'], sizeof($Errors), $Errors);
+		if (isset($InvoiceDetails['InvoiceNo'])){
+			$Errors=VerifyBankPartics($InvoiceDetails['Invoiceno'], sizeof($Errors), $Errors);
+		}
+		if (isset($InvoiceDetails['InvoiceAmount'])){
+			$Errors=VerifyBankPartics($InvoiceDetails['InvoiceAmount'], sizeof($Errors), $Errors);
+		}
+		if (isset($InvoiceDetails['GlAccount'])){
+			$Errors=VerifyBankPartics($InvoiceDetails['GlAccount'], sizeof($Errors), $Errors);
+		}
+		$FieldNames='';
+		$FieldValues='';
+		foreach ($SupplierDetails as $key => $Value) {
+			$FieldNames.=$key.', ';
+			$FieldValues.='"'.$Value.'", ';
+		}
+		$SQL = 'INSERT INTO suppliers ('.mb_substr($FieldNames,0,-2).') '.
+			'VALUES ('.mb_substr($FieldValues,0,-2).') ';
+		if (sizeof($Errors)==0) {
+			$Result = DB_query($SQL);
+			if (DB_error_no() != 0) {
+				$Errors[0] = DatabaseUpdateFailed;
+			} else {
+				$Errors[0]=0;
+			}
+		}
+		return $Errors;
+
+	}
