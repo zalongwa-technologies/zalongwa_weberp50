@@ -1226,7 +1226,13 @@ unset($ReturnValue);
 
 $Description = _('Creates a Supplier Invoice from the details passed to the method as an associative array');
 $Parameter[0]['name'] = _('Invoice Details');
-$Parameter[0]['description'] = _('An associative array describing the Supplier Invoice with the following fields: debtorno - the customer code; trandate - the date of the receipt in Y-m-d format; amountfx - the amount in FX; paymentmethod - the payment method of the receipt e.g. cash/EFTPOS/credit card; bankaccount - the webERP bank account to use for the transaction, reference - the reference to record against the webERP receipt transaction');
+$Parameter[0]['description'] = _('An associative array describing the Supplier Invoice with the following fields: 
+				supplierid - the Supplier code; 
+				trandate - the date of the receipt in Y-m-d format; 
+				amountfx - the amount in FX; 
+				paymentmethod - the payment method of the receipt e.g. cash/EFTPOS/credit card; 
+				bankaccount - the webERP bank account to use for the transaction, 
+				reference - the reference to record against the webERP receipt transaction');
 $Parameter[1]['name'] = _('User name');
 $Parameter[1]['description'] = _('A valid weberp username. This user should have security access to this data.');
 $Parameter[2]['name'] = _('User password');
