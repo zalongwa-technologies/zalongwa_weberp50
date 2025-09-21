@@ -394,7 +394,6 @@
 			$FieldValues.='"'.$Value.'", ';
 		}
 //=======mmmmm========
-// $_POST['PostInvoice'] is set so do the postings -and dont show the button to process
 	/*First do input reasonableness checks
 	 then do the updates and inserts to process the invoice entered */
 	$TaxTotal = 0;
