@@ -1227,7 +1227,7 @@ unset($ReturnValue);
 $Description = _('Creates a Supplier Invoice from the details passed to the method as an associative array');
 $Parameter[0]['name'] = _('Invoice Details');
 $Parameter[0]['description'] = _('An associative array describing the Supplier Invoice with the following fields: 
-				supplierid - the Supplier code; 
+				<b>supplierid</b> - the Supplier code; 
 				trandate - the date of the receipt in Y-m-d format; 
 				amountfx - the amount in FX; 
 				paymentmethod - the payment method of the receipt e.g. cash/EFTPOS/credit card; 
