@@ -1219,7 +1219,43 @@ function xmlrpc_InsertDebtorReceipt($request)
 	ob_end_flush();
 	return $rtn;
 }
+//====================new======================
+unset($Description);
+unset($Parameter);
+unset($ReturnValue);
 
+$Description = _('Creates a Supplier Invoice from the details passed to the method as an associative array');
+$Parameter[0]['name'] = _('Invoice Details');
+$Parameter[0]['description'] = _('An associative array describing the Supplier Invoice with the following fields: debtorno - the customer code; trandate - the date of the receipt in Y-m-d format; amountfx - the amount in FX; paymentmethod - the payment method of the receipt e.g. cash/EFTPOS/credit card; bankaccount - the webERP bank account to use for the transaction, reference - the reference to record against the webERP receipt transaction');
+$Parameter[1]['name'] = _('User name');
+$Parameter[1]['description'] = _('A valid weberp username. This user should have security access to this data.');
+$Parameter[2]['name'] = _('User password');
+$Parameter[2]['description'] = _('The weberp password associated with this user name. ');
+$ReturnValue = _('This function returns an array of integers. ')
+	. _('If the first element is zero then the function was successful, and the second element is the receipt number. ')
+	. _('Otherwise an array of error codes is returned and no insertion takes place. ');
+
+$InsertSupplierInvoice_sig = array(
+	array(Value::$xmlrpcArray, Value::$xmlrpcStruct),
+	array(Value::$xmlrpcArray, Value::$xmlrpcStruct, Value::$xmlrpcString, Value::$xmlrpcString));
+$InsertSupplierInvoice_doc = apiBuildDocHTML($Description, $Parameter, $ReturnValue);
+
+function xmlrpc_InsertSupplierInvoice($request)
+{
+	ob_start('ob_file_callback');
+	$encoder = new Encoder();
+	if ($request->getNumParams() == 3) {
+		$rtn = new Response($encoder->encode(InsertSupplierInvoice(
+			$encoder->decode($request->getParam(0)),
+			$request->getParam(1)->scalarval(),
+			$request->getParam(2)->scalarval())));
+	} else {
+		$rtn = new Response($encoder->encode(xmlrpc_InsertSupplierInvoice($encoder->decode($request->getParam(0)), '', '')));
+	}
+	ob_end_flush();
+	return $rtn;
+}
+//====================nnn======================
 unset($Description);
 unset($Parameter);
 unset($ReturnValue);
