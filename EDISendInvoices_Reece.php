@@ -2,10 +2,12 @@
 
 $PageSecurity = 15;
 
-include('includes/session.php');
+require(__DIR__ . '/includes/session.php');
+
 $ViewTopic = 'EDI';
 $BookMark = '';
 include('includes/header.php');
+
 include('includes/SQL_CommonFunctions.php'); // need for EDITransNo
 
 // Important: Default value for EDIsent in debtortrans should probably be 1 for non EDI customers
@@ -61,7 +63,7 @@ while ($CustDetails = DB_fetch_array($EDIInvCusts)) {
 		AND edisent=0
 		AND debtortrans.debtorno='" . $CustDetails['debtorno'] . "'";
 
-	$ErrMsg = _('There was a problem retrieving the customer transactions because');
+	$ErrMsg = __('There was a problem retrieving the customer transactions because');
 	$TransHeaders = DB_query($SQL, $ErrMsg);
 
 	if (DB_num_rows($TransHeaders) == 0) {
@@ -122,7 +124,7 @@ while ($CustDetails = DB_fetch_array($EDIInvCusts)) {
 				FROM debtortrans INNER JOIN salesorders ON debtortrans.order_ = salesorders.orderno
 				WHERE order_ = '" . $OrderNo . "'";
 
-				$ErrMsg = _('There was a problem retrieving the ship to details because');
+				$ErrMsg = __('There was a problem retrieving the ship to details because');
 				$ShipToLines = DB_query($SQL, $ErrMsg);
 
 				while ($ShipTo = DB_fetch_array($ShipToLines)) {
@@ -184,8 +186,8 @@ while ($CustDetails = DB_fetch_array($EDIInvCusts)) {
 
 		$SQL = "SELECT section, linetext FROM edimessageformat WHERE partnercode='" . $CustDetails['debtorno'] .
 			"' AND messagetype='INVOIC' ORDER BY sequenceno";
-		$ErrMsg = _('An error occurred in getting the EDI format template for') . ' ' . $CustDetails['debtorno'] . ' ' .
-			_('because');
+		$ErrMsg = __('An error occurred in getting the EDI format template for') . ' ' . $CustDetails['debtorno'] . ' ' .
+			__('because');
 		$MessageLinesResult = DB_query($SQL, $ErrMsg);
 
 		if (DB_num_rows($MessageLinesResult) > 0) {
@@ -200,7 +202,9 @@ while ($CustDetails = DB_fetch_array($EDIInvCusts)) {
 			DB_data_seek($MessageLinesResult, 0);
 
 			$EDITransNo = GetNextTransNo(99);
-			$fp = fopen('EDI_INV_' . $TransNo . '.txt', 'w');
+
+			/// @todo is there a better dir than this? eg. the sys temp dir?
+			$fp = fopen($PathPrefix . 'EDI_INV_' . $TransNo . '.txt', 'w');
 
 			while ($LineDetails = DB_fetch_array($MessageLinesResult)) {
 
@@ -305,12 +309,12 @@ while ($CustDetails = DB_fetch_array($EDIInvCusts)) {
 					"EDI_INV_" . $TransNo . ".txt",
 					false);
 
-				if ($MessageSent == True) {
+				if ($MessageSent == true) {
 					echo '<BR><BR>';
-					prnMsg(_('EDI Message') . ' ' . $TransNo . ' ' . _('was sucessfully emailed'), 'success');
+					prnMsg(__('EDI Message') . ' ' . $TransNo . ' ' . __('was sucessfully emailed'), 'success');
 				} else {
 					echo '<BR><BR>';
-					prnMsg(_('EDI Message') . ' ' . $TransNo . _('could not be emailed to') . ' ' .
+					prnMsg(__('EDI Message') . ' ' . $TransNo . __('could not be emailed to') . ' ' .
 						$CustDetails['ediaddress'], 'error');
 				}
 			} else { /*it must be ftp transport */
@@ -323,8 +327,8 @@ while ($CustDetails = DB_fetch_array($EDIInvCusts)) {
 				$login_result = ftp_login($conn_id, $CustDetails['ediserveruser'], $CustDetails['ediserverpwd']);
 				// check connection
 				if ((!$conn_id) || (!$login_result)) {
-					prnMsg( _('Ftp connection has failed'). '<BR>' . _('Attempted to connect to') . ' ' .
-						$CustDetails['ediaddress'] . ' ' ._('for user') . ' ' . $CustDetails['ediserveruser'],'error');
+					prnMsg( __('Ftp connection has failed'). '<BR>' . __('Attempted to connect to') . ' ' .
+						$CustDetails['ediaddress'] . ' ' .__('for user') . ' ' . $CustDetails['ediserveruser'],'error');
 					include('includes/footer.php');
 					exit();
 				}
@@ -332,26 +336,26 @@ while ($CustDetails = DB_fetch_array($EDIInvCusts)) {
 					'EDI_INV_' . $EDITransNo, FTP_ASCII); // check upload status
 				if (!$MessageSent) {
 					echo '<BR><BR>';
-					prnMsg(_('EDI Message') . ' ' . $EDITransNo . ' ' . _('could not be sent via ftp to') .' ' .
+					prnMsg(__('EDI Message') . ' ' . $EDITransNo . ' ' . __('could not be sent via ftp to') .' ' .
 						$CustDetails['ediaddress'],'error');
 				} else {
 					echo '<BR><BR>';
-					prnMsg( _('Successfully uploaded EDI_INV_') . $EDITransNo . ' ' . _('via ftp to') . ' ' .
+					prnMsg( __('Successfully uploaded EDI_INV_') . $EDITransNo . ' ' . __('via ftp to') . ' ' .
 						$CustDetails['ediaddress'],'success');
 				} // close the FTP stream
 				ftp_quit($conn_id);
 				*/
 			}
 
-			if ($MessageSent == True) { /*the email was sent sucessfully */
+			if ($MessageSent == true) { /*the email was sent successfully */
 				/* move the sent file to sent directory */
-				$Source = 'EDI_INV_' . $TransNo . '.txt';
-				$destination = 'EDI_Sent/EDI_INV_' . $TransNo . '.txt';
+				$Source = $PathPrefix . 'EDI_INV_' . $TransNo . '.txt';
+				$destination = $PathPrefix . 'EDI_Sent/EDI_INV_' . $TransNo . '.txt';
 				rename($Source, $destination);
 			}
 
 		} else {
-			prnMsg(_('Cannot create EDI message since there is no EDI INVOIC message template set up for') . ' ' .
+			prnMsg(__('Cannot create EDI message since there is no EDI INVOIC message template set up for') . ' ' .
 				$CustDetails['debtorno'], 'error');
 		} /*End if there is a message template defined for the customer invoic*/
 

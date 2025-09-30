@@ -2,7 +2,7 @@
 
 /* definition of the ReceiptBatch class */
 
-Class Receipt_Batch {
+class Receipt_Batch {
 
 	var $Items; /*array of objects of Receipt class - id is the pointer */
 	var $BatchNo; /*Batch Number*/
@@ -24,7 +24,7 @@ Class Receipt_Batch {
 	/*Constructor function initialises a new receipt batch */
 		$this->Items = array();
 		$this->ItemCounter=0;
-		$this->total=0;
+		$this->Total=0;
 	}
 
 	function Receipt_Batch() {
@@ -35,7 +35,7 @@ Class Receipt_Batch {
 		if ((isset($Customer) OR isset($GLCode)) AND ($Amount + $Discount) !=0){
 			$this->Items[$this->ItemCounter] = new Receipt($Amount, $Customer, $Discount, $Narrative, $this->ItemCounter, $GLCode, $PayeeBankDetail, $CustomerName, $Tag);
 			$this->ItemCounter++;
-			$this->total = $this->total + ($Amount + $Discount) / $this->ExRate;
+			$this->Total = $this->Total + ($Amount + $Discount) / $this->ExRate;
 			Return 1;
 		}
 		Return 0;
@@ -43,26 +43,26 @@ Class Receipt_Batch {
 
 	function remove_receipt_item($RcptID){
 
-		$this->total = $this->total - ($this->Items[$RcptID]->Amount + $this->Items[$RcptID]->Discount) / $this->ExRate;
+		$this->Total = $this->Total - ($this->Items[$RcptID]->Amount + $this->Items[$RcptID]->Discount) / $this->ExRate;
 		unset($this->Items[$RcptID]);
 
 	}
 
 } /* end of class defintion */
 
-Class Receipt {
-	Var $Amount;	/*in currency of the customer*/
-	Var $Customer; /*customer code */
-	Var $CustomerName;
-	Var $Discount;
-	Var $Narrative;
-	Var $GLCode;
-	Var $PayeeBankDetail;
-	Var $ID;
+class Receipt {
+	var $Amount;	/*in currency of the customer*/
+	var $Customer; /*customer code */
+	var $CustomerName;
+	var $Discount;
+	var $Narrative;
+	var $GLCode;
+	var $PayeeBankDetail;
+	var $ID;
 	var $Tag;
 	var $TagName;
 
-	function __construct ($Amt, $Cust, $Disc, $Narr, $id, $GLCode, $PayeeBankDetail, $CustomerName, $Tag){
+	function __construct($Amt, $Cust, $Disc, $Narr, $id, $GLCode, $PayeeBankDetail, $CustomerName, $Tag){
 /* Constructor function to add a new Receipt object with passed params */
 		$this->Amount =$Amt;
 		$this->Customer = $Cust;
@@ -72,7 +72,7 @@ Class Receipt {
 		$this->GLCode = $GLCode;
 		$this->PayeeBankDetail=$PayeeBankDetail;
 		$this->ID = $id;
-		$this->tag = $Tag;
+		$this->Tag = $Tag;
 		$Result = DB_query("SELECT tagdescription FROM tags WHERE tagref='" . $Tag . "'");
 		if (DB_num_rows($Result)==1){
 			$TagRow = DB_fetch_array($Result);

@@ -1,5 +1,10 @@
 <?php
+
 $AllowAnyone = true;
+
+require(__DIR__ . '/includes/session.php');
+
+use Dompdf\Dompdf;
 
 $FromCriteria = '1'; /*Category From */
 $ToCriteria = 'zzzzzzzz'; /*Category To */
@@ -11,15 +16,12 @@ $_POST['FromCriteria'] = $FromCriteria; /* so PDFInventoryValnPageHeader.php wor
 $_POST['ToCriteria'] = $ToCriteria; /* so PDFInventoryValnPageHeader.php works too */
 $_POST['Location'] = $Location; /* so PDFInventoryValnPageHeader.php works too */
 
-include('includes/session.php');
-use Dompdf\Dompdf;
-
 $Recipients = GetMailList('InventoryValuationRecipients');
 
 if (sizeOf($Recipients) == 0) {
-	$Title = _('Inventory Valuation') . ' - ' . _('Problem Report');
+	$Title = __('Inventory Valuation') . ' - ' . __('Problem Report');
 	include('includes/header.php');
-	prnMsg(_('There are no members of the "InventoryValuationRecipients" email group'), 'warn');
+	prnMsg(__('There are no members of the "InventoryValuationRecipients" email group'), 'warn');
 	include('includes/footer.php');
 	exit();
 }
@@ -47,21 +49,8 @@ $SQL = "SELECT stockmaster.categoryid,
 			ORDER BY stockmaster.categoryid,
 				stockmaster.stockid";
 
-$InventoryResult = DB_query($SQL, '', '', false, true);
-$ListCount = DB_num_rows($InventoryResult);
-
-if (DB_error_no() != 0) {
-	$Title = _('Inventory Valuation') . ' - ' . _('Problem Report');
-	include('includes/header.php');
-	echo _('The inventory valuation could not be retrieved by the SQL because') . ' - ' . DB_error_msg();
-	echo '<br /><a href="' . $RootPath . '/index.php">' . _('Back to the menu') . '</a>';
-	if ($Debug == 1) {
-		echo '<br />' . $SQL;
-	}
-
-	include('includes/footer.php');
-	exit();
-}
+$ErrMsg = __('The inventory valuation could not be retrieved');
+$InventoryResult = DB_query($SQL, $ErrMsg);
 
 $HTML = '';
 
@@ -75,17 +64,17 @@ $HTML .= '<meta name="author" content="WebERP " . $Version">
 		<body>
 			<div class="centre" id="ReportHeader">
 				' . $_SESSION['CompanyRecord']['coyname'] . '<br />
-				' . _('Inventory Valuation Report') . '<br />
-				' . _('Printed') . ': ' . Date($_SESSION['DefaultDateFormat']) . '<br />
+				' . __('Inventory Valuation Report') . '<br />
+				' . __('Printed') . ': ' . Date($_SESSION['DefaultDateFormat']) . '<br />
 			</div>
 			<table>
 				<thead>
 					<tr>
-						<th>' . _('Category') . '/' . _('Item') . '</th>
-						<th>' . _('Description') . '</th>
-						<th>' . _('Quantity') . '</th>
-						<th>' . _('Cost Per Unit') . '</th>
-						<th>' . _('Extended Cost') . '</th>
+						<th>' . __('Category') . '/' . __('Item') . '</th>
+						<th>' . __('Description') . '</th>
+						<th>' . __('Quantity') . '</th>
+						<th>' . __('Cost Per Unit') . '</th>
+						<th>' . __('Extended Cost') . '</th>
 					</tr>
 				</thead>
 				<tbody>';
@@ -103,7 +92,7 @@ while ($InventoryValn = DB_fetch_array($InventoryResult)) {
 			$DisplayCatTotVal = locale_number_format($CatTot_Val, 2);
 			$HTML .= '<tr class="total_row">
 						<td colspan="3"></td>
-						<td>' . _('Total for') . ' ' . $Category . " - " . $CategoryName . '</td>
+						<td>' . __('Total for') . ' ' . $Category . " - " . $CategoryName . '</td>
 						<td class="number">' . $DisplayCatTotVal . '</td>
 					</tr>';
 
@@ -135,7 +124,7 @@ while ($InventoryValn = DB_fetch_array($InventoryResult)) {
 $DisplayCatTotVal = locale_number_format($CatTot_Val, 2);
 $HTML .= '<tr class="total_row">
 			<td colspan="3"></td>
-			<td>' . _('Total for') . ' ' . $Category . ' - ' . $CategoryName . '</td>
+			<td>' . __('Total for') . ' ' . $Category . ' - ' . $CategoryName . '</td>
 			<td class="number">' . $DisplayCatTotVal . '</td>
 		</tr>';
 
@@ -143,7 +132,7 @@ $DisplayTotalVal = locale_number_format($Tot_Val, 2);
 /*Print out the grand totals */
 $HTML .= '<tr class="total_row">
 			<td colspan="3"></td>
-			<td>' . _('Grand Total Value') . '</td>
+			<td>' . __('Grand Total Value') . '</td>
 			<td class="number">' . $DisplayTotalVal . '</td>
 		</tr>';
 
@@ -151,50 +140,54 @@ $HTML .= '</tbody>
 		</table>';
 
 if ($ListCount == 0) {
-	$Title = _('Print Inventory Valuation Error');
+	$Title = __('Print Inventory Valuation Error');
 	include('includes/header.php');
-	echo '<p>' . _('There were no items with any value to print out for the location specified');
-	echo '<br /><a href="' . $RootPath . '/index.php">' . _('Back to the menu') . '</a>';
+	echo '<p>' . __('There were no items with any value to print out for the location specified');
+	echo '<br /><a href="' . $RootPath . '/index.php">' . __('Back to the menu') . '</a>';
 	include('includes/footer.php');
 	exit(); // Javier: needs check
 
 } else {
+
+	/// @todo we could skip generating the pdf if $From == ''
 	$dompdf = new Dompdf(['chroot' => __DIR__]);
 	$dompdf->loadHtml($HTML);
-
-	// (Optional) Setup the paper size and orientation
+	// (Optional) set up the paper size and orientation
 	$dompdf->setPaper($_SESSION['PageSize'], 'portrait');
-
 	// Render the HTML as PDF
 	$dompdf->render();
-
 	// Output the generated PDF to a temporary file
 	$output = $dompdf->output();
-	file_put_contents(sys_get_temp_dir() . '/' . $_SESSION['DatabaseName'] . '_InventoryValuation_' . date('Y-m-d') . '.pdf', $output);
+
+	$PDFFileName = sys_get_temp_dir() . '/' . $_SESSION['DatabaseName'] . '_InventoryValuation_' . date('Y-m-d') . '.pdf';
+	file_put_contents($PDFFileName, $output);
+
 	$From = $_SESSION['CompanyRecord']['email'];
-	$Subject = _('Inventory Valuation Report');
-	$Body = _('Please find herewith the stock valuation report');
 	if ($From != '') {
-		$ConfirmationText = _('Please find attached the Reorder level report, generated by user') . ' ' . $_SESSION['UserID'] . ' ' . _('at') . ' ' . Date('Y-m-d H:i:s');
-		$EmailSubject = $_SESSION['DatabaseName'] . '_ReOrderLevel_' . date('Y-m-d') . '.pdf';
+		$Subject = __('Inventory Valuation Report');
+		$Body = __('Please find herewith the stock valuation report');
+		$ConfirmationText = __('Please find attached the Inventory Valuation report, generated by user') . ' ' . $_SESSION['UserID'] . ' ' . __('at') . ' ' . Date('Y-m-d H:i:s');
+		$EmailSubject = $_SESSION['DatabaseName'] . '_InventoryValuation_' . date('Y-m-d') . '.pdf';
+		/// @todo drop this IF - it's handled within SendEmailFromWebERP
 		if ($_SESSION['SmtpSetting'] == 0) {
 			mail($_SESSION['InventoryManagerEmail'], $EmailSubject, $ConfirmationText);
 		} else {
-			$Result = SendEmailFromWebERP($From, $Recipients, $Subject, $Body, array(sys_get_temp_dir() . '/' . $_SESSION['DatabaseName'] . '_InventoryValuation_' . date('Y-m-d') . '.pdf'), false);
+			$Result = SendEmailFromWebERP($From, $Recipients, $Subject, $Body, array($PDFFileName), false);
 		}
-		unlink(sys_get_temp_dir() . '/' . $_SESSION['DatabaseName'] . '_ReOrderLevel_' . date('Y-m-d') . '.pdf');
 	}
-	$Title = _('Send Report By Email');
+	unlink($PDFFileName);
+
+	$Title = __('Send Report By Email');
 	include('includes/header.php');
 
 	if ($Result) {
-		$Title = _('Print Inventory Valuation');
-		prnMsg(_('The Inventory valuation report has been mailed'), 'success');
-		echo '<div class="centre"><a href="' . $RootPath . '/index.php">' . _('Back to the menu') . '</a></div>';
+		$Title = __('Print Inventory Valuation');
+		prnMsg(__('The Inventory valuation report has been mailed'), 'success');
+		echo '<div class="centre"><a href="' . $RootPath . '/index.php">' . __('Back to the menu') . '</a></div>';
 	} else {
-		$Title = _('Print Inventory Valuation Error');
-		prnMsg(_('There are errors and the emails were not sent'), 'error');
-		echo '<div class="centre"><a href="' . $RootPath . '/index.php">' . _('Back to the menu') . '</a></div>';
+		$Title = __('Print Inventory Valuation Error');
+		prnMsg(__('There are errors and the emails were not sent'), 'error');
+		echo '<div class="centre"><a href="' . $RootPath . '/index.php">' . __('Back to the menu') . '</a></div>';
 	}
 
 	include('includes/footer.php');

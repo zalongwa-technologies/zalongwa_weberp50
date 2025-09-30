@@ -1,8 +1,8 @@
 <?php
 
-include('includes/session.php');
+require(__DIR__ . '/includes/session.php');
 
-global $RootPath;
+//global $RootPath;
 
 /*
 http://127.0.0.1/~brink/webERP/GetStockImage.php
@@ -128,15 +128,15 @@ if ( file_exists($tmpFileName.'.jpg') ) {
 	$IsJpeg = $DefaultIsJpeg;
 }
 
-if ( !extension_loaded('gd') OR (!$automake && !isset($FileName)) ) {
-	$Title = _('Stock Image Retrieval ....');
+if ( !extension_loaded('gd') OR (!$automake and (!isset($FileName) or !file_exists($FilePath.$FileName))) ) {
+	$Title = __('Stock Image Retrieval ....');
 	include('includes/header.php');
 	if ( !extension_loaded('gd') ) {
-		prnMsg( _('The Image could not be retrieved because the GD extension is missing'), 'error');
+		prnMsg( __('The Image could not be retrieved because the GD extension is missing'), 'error');
 	} else {
-		prnMsg( _('The Image could not be retrieved because it does not exist'), 'error');
+		prnMsg( __('The Image could not be retrieved because it does not exist'), 'error');
 	}
-	echo '<br /><a href="' .$RootPath .'/index.php">' . _('Back to the menu'). '</a>';
+	echo '<br /><a href="' .$RootPath .'/index.php">' . __('Back to the menu'). '</a>';
 	include('includes/footer.php');
 	exit();
 }
@@ -225,6 +225,7 @@ if ( $automake AND !isset($FileName) ) {
 	} else {
 		$im = imagecreatefrompng($tmpFileName);
 	}
+
 	// Have we got a background color
 	if ( isset($BackgroundColour) )
 		$BackgroundColour = DecodeBgColor( $BackgroundColour );
@@ -269,7 +270,6 @@ if ( $automake AND !isset($FileName) ) {
 		$tmpim = imagecreatetruecolor($resize_new_width, $resize_new_height);
 		imagealphablending ( $tmpim, true);
 		imagecopyresampled($tmpim, $im, 0, 0, 0, 0, $resize_new_width, $resize_new_height, $sw, $sh );
-		imagedestroy($im);
 		$im = $tmpim;
 		unset($tmpim);
 
@@ -355,5 +355,3 @@ header('Content-type: image/'.$style);
 $func = 'image'.$functype;
 // AND send image
 $func($im);
-// Destroy image
-imagedestroy($im);

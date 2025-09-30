@@ -1,21 +1,22 @@
 <?php
-/* webERP Session handling
- * This file is included at the start of every script in webERP
+
+/* webERP Session handling and general bootstrapping.
+ *
+ * This file is included at the start of every script in webERP.
  * It sets up the session and includes the necessary files for:
  * - database connection
  * - language setup
  * - password checking
  * - security authorisation level check
- * - config.php is included in session.php
+ * NB: config.php is included in session.php
  */
 
 if (!isset($PathPrefix)) {
+	/// @todo make it a constant. Also, rename it to ROOT_PATH, ROOT_DIR or similar
 	$PathPrefix = __DIR__ . '/../';
 }
 
-require $PathPrefix.'vendor/autoload.php';
-
-$DefaultDatabase = 'weberp';
+require($PathPrefix.'vendor/autoload.php');
 
 if (!file_exists($PathPrefix . 'config.php')) {
 	// gg: there is no need for htmlspecialchars here, as we never output $RootPath into html
@@ -27,12 +28,29 @@ if (!file_exists($PathPrefix . 'config.php')) {
 	exit();
 }
 
+$DefaultDatabase = 'weberp';
+
 include($PathPrefix . 'config.php');
 
 if (isset($dbuser)) { //this gets past an upgrade issue where old versions used lower case variable names
+	/// @todo we should attempt to update the config.php file...
 	$DBUser = $dbuser;
 	$DBPassword = $dbpassword;
 	$DBType = $dbType;
+	unset($dbuser, $dbpassword, $dbType);
+}
+
+// another upgrade issue - mysql php extension is not available anymore, unless users are on obsolete php versions
+if ($DBType === 'mysql' && !extension_loaded('mysql')) {
+	/// @todo we should attempt to update the config.php file...
+	$DBType = 'mysqli';
+}
+
+// another upgrade issue
+if (isset($MySQLPort) && !isset($DBPort)) {
+	/// @todo we should attempt to update the config.php file...
+	$DBPort = $MySQLPort;
+	unset($MySQLPort);
 }
 
 if (isset($SessionSavePath)) {
@@ -56,6 +74,10 @@ if (!isset($SessionName)) {
 session_name($SessionName);
 session_start();
 
+include($PathPrefix . 'includes/LanguageSetup.php');
+
+/// @todo instead of delegating to ConnectDB.php the handling of $_POST, do it here, so that that file can then be used
+///       for even when authentication is not based on login-form
 include($PathPrefix . 'includes/ConnectDB.php');
 include($PathPrefix . 'includes/DateFunctions.php');
 
@@ -95,14 +117,16 @@ if (isset($_SESSION['DatabaseName'])) {
 	$_SESSION['FormID'] = sha1(uniqid(mt_rand(), true));
 }
 
-include($PathPrefix . 'includes/LanguageSetup.php');
-$FirstLogin = False;
+$FirstLogin = false;
 
 if (basename($_SERVER['SCRIPT_NAME']) == 'Logout.php') {
+
+	/// @todo move this processing inside Logout.php
 	if (isset($_SESSION['Favourites'])) {
-		//retrieve the sql data;
+		// Remove from the db the user favorites which are not in the session
+		/// @todo this could be done in a single query using WHERE NOT IN ...
 		$SQL = "SELECT href, caption FROM favourites WHERE userid='" . $_SESSION['UserID'] . "'";
-		$ErrMsg = _('Failed to retrieve favorites');
+		$ErrMsg = __('Failed to retrieve favorites');
 		$Result = DB_query($SQL, $ErrMsg);
 		if (DB_num_rows($Result) > 0) {
 			$SQL = array();
@@ -118,16 +142,26 @@ if (basename($_SERVER['SCRIPT_NAME']) == 'Logout.php') {
 
 	header('Location: ' . htmlspecialchars_decode($RootPath) . '/index.php'); //go back to the main index/login
 
-} elseif (isset($AllowAnyone)) { /* only do security checks if AllowAnyone is not true */
-	if (!isset($_SESSION['DatabaseName'])) {
+	/// @todo should we not just return, here?
 
+} elseif (isset($AllowAnyone) && $AllowAnyone == true) { /* only do security checks if AllowAnyone is not true */
+	if (!isset($_SESSION['AllowedPageSecurityTokens'])) {
 		$_SESSION['AllowedPageSecurityTokens'] = array();
+	}
+	if (!isset($_SESSION['DatabaseName'])) {
 		$_SESSION['DatabaseName'] = $DefaultDatabase;
 	}
 	include_once($PathPrefix . 'includes/ConnectDB_' . $DBType . '.php');
 	include($PathPrefix . 'includes/GetConfig.php');
+
 } else {
-	include($PathPrefix . 'includes/UserLogin.php'); /* Login checking and setup. Includes GetConfig.php on successful logins */
+	include($PathPrefix . 'includes/LoginFunctions.php'); /* Login checking and setup. Includes GetConfig.php on successful logins */
+
+	/// @todo what if the current user is already logged in? We should at least log him/her out before re-logging in...
+	///       (or maybe swallow that event, and log it as suspected hack attempt?)
+
+	/// @todo the login form points to /index.php. Should we avoid processing $_POST['UserNameEntryField'] and
+	///       $_POST['Password'] on other pages? We might even go as far as creating a dedicated Login.php...
 
 	if (isset($_POST['UserNameEntryField']) and isset($_POST['Password'])) {
 		$rc = userLogin($_POST['UserNameEntryField'], $_POST['Password'], $SysAdminEmail);
@@ -138,12 +172,16 @@ if (basename($_SERVER['SCRIPT_NAME']) == 'Logout.php') {
 		$rc = UL_OK;
 	}
 
-	/*  Need to set the theme to make login screen nice */
+	/* Need to set the theme to make login screen nice */
 	$Theme = (isset($_SESSION['Theme'])) ? $_SESSION['Theme'] : $DefaultTheme;
+
 	switch ($rc) {
-		case UL_OK; //user logged in successfully
+		case UL_OK: //user logged in successfully
+			/// @todo shouldn't we only set the cookie if $FirstLogin = true ?
 			setcookie('Login', $_SESSION['DatabaseName']);
-			include($PathPrefix . 'includes/LanguageSetup.php'); //set up the language
+			//include($PathPrefix . 'includes/LanguageSetup.php'); //set up the language
+
+			/// @todo the session table was created in DBUpdateNumber 13, not 11!
 			if ($_SESSION['DBUpdateNumber'] >= 11) {
 				$CheckSQL = "SELECT sessionid
 							FROM sessions
@@ -171,19 +209,24 @@ if (basename($_SERVER['SCRIPT_NAME']) == 'Logout.php') {
 										NOW())";
 						$Result = DB_query($SQL);
 					}
+					/// @todo if if DBUpdateNumber < 22, insert into sessions the sessionid
 				} else {
 					// it is not a new session, update the script name
+					/// @todo if if DBUpdateNumber < 22, do nothing
+					/// @todo if DBUpdateNumber >= 22, check that the known session userID matches $_SESSION['UserID']
+					// no need to escape the session ID - see https://www.php.net/manual/en/function.session-id.php#116836
 					$SQL = "UPDATE sessions
-							SET script = '" . basename($_SERVER['SCRIPT_NAME']) . "',
-								scripttime = NOW()
+							SET script = '" . basename($_SERVER['SCRIPT_NAME']) . "', scripttime = NOW()
 							WHERE sessionid='" . session_id() . "'";
 					$Result = DB_query($SQL);
 				}
-				unset($Result);
+				unset($CheckSQL, $CheckResult, $Result, $SQL);
 			}
-		break;
+			break;
 
 		case UL_SHOWLOGIN:
+			/// @todo here, we should store in the sessions table the current session id and the script name. This
+			///       way, when the user logs in, (s)he can be redirected to the original script.
 			include($PathPrefix . 'includes/Login.php');
 			exit();
 
@@ -192,28 +235,40 @@ if (basename($_SERVER['SCRIPT_NAME']) == 'Logout.php') {
 			exit();
 
 		case UL_CONFIGERR:
-			$Title = _('Account Error Report');
+			$Title = __('Account Error Report');
 			include($PathPrefix . 'includes/header.php');
 			echo '<br /><br /><br />';
-			prnMsg(_('Your user role does not have any access defined for webERP. There is an error in the security setup for this user account'), 'error');
+			prnMsg(__('Your user role does not have any access defined for webERP. There is an error in the security setup for this user account'), 'error');
 			include($PathPrefix . 'includes/footer.php');
 			exit();
 
 		case UL_NOTVALID:
-			$DemoText = '<font size="3" color="red"><b>' . _('incorrect password') . '</b></font><br /><b>' . _('The user/password combination') . '<br />' . _('is not a valid user of the system') . '</b>';
+			$DemoText = '<font size="3" color="red"><b>' . __('incorrect password') . '</b></font><br /><b>' . __('The user/password combination') . '<br />' . __('is not a valid user of the system') . '</b>';
 			include($PathPrefix . 'includes/Login.php');
 			exit();
 
 		case UL_MAINTENANCE:
-			$DemoText = '<font size="3" color="red"><b>' . _('system maintenance') . '</b></font><br /><b>' . _('webERP is not available right now') . '<br />' . _('during maintenance of the system') . '</b>';
+			$DemoText = '<font size="3" color="red"><b>' . __('system maintenance') . '</b></font><br /><b>' . __('webERP is not available right now') . '<br />' . __('during maintenance of the system') . '</b>';
 			include($PathPrefix . 'includes/Login.php');
 			exit();
 	}
+
+	unset($rc);
 }
 
 /* If the Code $Version - held in ConnectDB.php is > than the Database VersionNumber held in config table then do upgrades */
 /* If the highest of the DB update files is greater than the DBUpdateNumber held in config table then do upgrades */
-$_SESSION['DBVersion'] = HighestFileName($PathPrefix);
+/* gg: reduce resource usage by not checking the available upgrade files on every page - only on session start.
+ * This poses a small risk of users not being told to upgrade the db if a deployment happens while users are logged-in,
+ * but that is definitely a not-recommended practice
+ */
+if (!isset($_SESSION['DBVersion'])) {
+	$_SESSION['DBVersion'] = HighestFileName($PathPrefix);
+}
+// $_SESSION['DBUpdateNumber'] is normally set by GetConfig.php - but in case we never passed via that code path...
+if (!isset($_SESSION['DBUpdateNumber'])) {
+	$_SESSION['DBUpdateNumber'] = -1;
+}
 if (isset($_SESSION['DBVersion'])
 	and isset($_SESSION['DBUpdateNumber'])
 	and ($_SESSION['DBVersion'] > $_SESSION['DBUpdateNumber'])
@@ -233,9 +288,10 @@ if (isset($_POST['Theme']) and ($_SESSION['UsersRealName'] == $_POST['RealName']
 	$_SESSION['Theme'] = $DefaultTheme;
 }
 
+/// @todo move this block to just after session_start
 if ($_SESSION['HTTPS_Only'] == 1) {
 	if ($_SERVER['HTTPS'] != 'on') {
-		prnMsg(_('webERP is configured to allow only secure socket connections. Pages must be called with https://') . ' .....', 'error');
+		prnMsg(__('webERP is configured to allow only secure socket connections. Pages must be called with https://') . ' .....', 'error');
 		exit();
 	}
 }
@@ -244,10 +300,10 @@ if ($_SESSION['HTTPS_Only'] == 1) {
 // arrays defining access for each group of users. These definitions can be modified by a system admin under setup
 
 if (!is_array($_SESSION['AllowedPageSecurityTokens']) and !isset($AllowAnyone)) {
-	$Title = _('Account Error Report');
+	$Title = __('Account Error Report');
 	include($PathPrefix . 'includes/header.php');
 	echo '<br /><br /><br />';
-	prnMsg(_('Security settings have not been defined for your user account. Please advise your system administrator. It could also be that there is a session problem with your PHP web server'), 'error');
+	prnMsg(__('Security settings have not been defined for your user account. Please advise your system administrator. It could also be that there is a session problem with your PHP web server'), 'error');
 	include($PathPrefix . 'includes/footer.php');
 	exit();
 }
@@ -258,19 +314,19 @@ if (!is_array($_SESSION['AllowedPageSecurityTokens']) and !isset($AllowAnyone)) 
  */
 if (!isset($PageSecurity)) {
 	//only hardcoded in the UpgradeDatabase script - so old versions that don't have the scripts.pagesecurity field do not choke
-	$PageSecurity = $_SESSION['PageSecurityArray'][basename($_SERVER['SCRIPT_NAME']) ];
+	$PageSecurity = $_SESSION['PageSecurityArray'][basename($_SERVER['SCRIPT_NAME'])];
 }
 
 if (!isset($AllowAnyone)) {
 	if ((!in_array($PageSecurity, $_SESSION['AllowedPageSecurityTokens']) or !isset($PageSecurity))) {
-		$Title = _('Security Permissions Problem');
+		$Title = __('Security Permissions Problem');
 		include($PathPrefix . 'includes/header.php');
 		echo '<tr>
 				<td class="menu_group_items">
 					<table width="100%" class="table_index">
 						<tr>
 							<td class="menu_group_item">
-								<b><font style="size:+1; text-align:center;">' . _('The security settings on your account do not permit you to access this function') . '</font></b>
+								<b><font style="size:+1; text-align:center;">' . __('The security settings on your account do not permit you to access this function') . '</font></b>
 							</td>
 						</tr>
 					</table>
@@ -294,23 +350,20 @@ if (in_array(1, $_SESSION['AllowedPageSecurityTokens']) and count($_SESSION['All
 } else {
 	$CustomerLogin = 0;
 }
-if (in_array($_SESSION['PageSecurityArray']['WWW_Users.php'], $_SESSION['AllowedPageSecurityTokens'])) { /*System administrator login */
-	$Debug = 1; //allow debug messages
-
-} else {
-	$Debug = 0; //don't allow debug messages
-}
 
 if ($FirstLogin and !$SupplierLogin and !$CustomerLogin and $_SESSION['ShowDashboard'] == 1) {
 	header('Location: ' . htmlspecialchars_decode($RootPath) . '/Dashboard.php');
 }
 
+/// @todo instead of checking for $_POST['CompanyNameField'], only disable this check on posts from Login.php, or
+///       at least make it harder for an attacker to disable the check, f.e. add a var in the session when displaying
+///       the form. Or just also do the check on Login...
 if (!isset($_POST['CompanyNameField']) and sizeof($_POST) > 0 and !isset($AllowAnyone)) {
-	/*Security check to ensure that the form submitted is originally sourced from webERP with the FormID = $_SESSION['FormID'] - which is set before the first login*/
+	/* Security check to ensure that the form submitted is originally sourced from webERP with the FormID = $_SESSION['FormID'] - which is set before the first login */
 	if (!isset($_POST['FormID']) or ($_POST['FormID'] != $_SESSION['FormID'])) {
-		$Title = _('Error in form verification');
+		$Title = __('Error in form verification');
 		include('includes/header.php');
-		prnMsg(_('This form was not submitted with a correct ID'), 'error');
+		prnMsg(__('This form was not submitted with a correct ID'), 'error');
 		include('includes/footer.php');
 		exit();
 	}
@@ -332,10 +385,10 @@ function HighestFileName($PathPrefix) {
 	return $LastFile ? basename($LastFile, ".php") : '';
 }
 
-function quote_smart($Value) {
+/*function quote_smart($Value) {
 	// Quote if not integer
 	if (!is_numeric($Value)) {
 		$Value = "'" . DB_escape_string($Value) . "'";
 	}
 	return $Value;
-}
+}*/

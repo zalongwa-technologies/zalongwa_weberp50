@@ -28,7 +28,7 @@ z-index:1000
 background: linear-gradient(90deg, var(--main_colour2) 0%, var(--main_colour1) 100%);
 border:solid var(--border_colour) 2px;
 border-radius:15px;
-margin:0 10px 30px 20px;
+margin:0 10px 10px 20px;
 }
 form {
 margin:0

@@ -7,7 +7,7 @@ information and filter/criteria information. The Report builder process is as fo
 
 Step 1: (or script entry): displays the current listing of reports. Uses form ReportsHome.html as a UI.
 Step 2: (action=step2): After the user has selected an option, this step is followed to enter a report
-	name and the type of report it is for grouping purposes.
+		name and the type of report it is for grouping purposes.
 Step 3: Handles the page setup information.
 Step 4: Handles the database setup and link information.
 Step 5: Handles the database field selection.
@@ -21,7 +21,7 @@ $PathPrefix = __DIR__ . '/../../';
 
 $PageSecurity = 2; // set security level for webERP
 // Fetch necessary include files for webERP
-require ($PathPrefix . 'includes/session.php');
+require($PathPrefix . 'includes/session.php');
 
 // Initialize some constants
 $ReportLanguage = 'en_US';				// default language file
@@ -30,11 +30,10 @@ define('DBRptFields','reportfields');	// name of the database holding the report
 define ('DefRptPath',$PathPrefix . 'companies/' . $_SESSION['DatabaseName'] . '/reportwriter/');	// path to default reports
 define ('MyDocPath',$PathPrefix . 'companies/' . $_SESSION['DatabaseName'] . '/reportwriter/');	// path to user saved documents
 
-
 // Fetch necessary include files for report creator
-require_once('../languages/' . $ReportLanguage . '/reports.php');
-require_once('defaults.php');
-require(__DIR__ . '/RCFunctions.php');
+require_once(__DIR__ . '/../languages/' . $ReportLanguage . '/reports.php');
+require_once(__DIR__ . '/../includes/defaults.php');
+require(__DIR__ . '/../includes/RCFunctions.php');
 
 $usrMsg = array(); // initialize array for return messages
 

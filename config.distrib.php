@@ -39,10 +39,9 @@ date_default_timezone_set('Pacific/Auckland');
 // $Host is the computer ip address or name where the database is located
 // If the web server is also the database server then use 'localhost' or '127.0.0.1'
 $Host = 'localhost';
-$MySQLPort = 3306;
+$DBPort = 3306;
 // The type of db server being used
-//$DBType = 'mysql'; // DEPRECATED
-//$DBType = 'mysqli';
+//$DBType = 'mysqli'; // use for mysql server
 //$DBType = 'mariadb';
 //$DBType = 'postgres'; // UNSUPPORTED
 $DBType = 'mysqli';
@@ -119,6 +118,11 @@ $RootPath = htmlspecialchars(dirname($_SERVER['PHP_SELF']), ENT_QUOTES, 'UTF-8')
 error_reporting(E_ALL && ~E_NOTICE);
 // For Development, use:
 //error_reporting(-1);
+
+// Debug information
+$Debug = 0; // No debug information will be shown. Recommended for production environments
+// $Debug = 1; // Simple debug information will be shown. Recommended for development environments
+// $Debug = 2; // Detailed debug information will be shown. Recommended for development environments
 
 // Installed companies
 // - see companies/dbname/Companies.php

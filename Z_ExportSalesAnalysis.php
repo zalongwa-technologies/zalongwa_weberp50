@@ -1,32 +1,36 @@
 <?php
 
-/* Creates the csv files necessary for Phocas sales analysis and sends to an ftp server*/
+/* Creates the csv files necessary for Phocas sales analysis and sends to an ftp server */
 
-/*Config */
+$AllowAnyone = true;
+$PageSecurity = 15;
+
+require(__DIR__ . '/includes/session.php');
+
+$Title = __('Create and send sales analysis files');
+$ViewTopic = 'SpecialUtilities';
+$BookMark = basename(__FILE__, '.php');
+include('includes/header.php');
+
+/* Config */
 
 $FTP_Server = 'someftpserver.com';
 $FTP_User = 'someuser';
 $FTP_Password = '';
 
-$AllowAnyone=true;
-$PageSecurity=15;
 $_POST['CompanyNameField']= 'yourdatabase';
 
-include('includes/session.php');
-$Title = _('Create and send sales analysis files');
-$ViewTopic = 'SpecialUtilities';
-$BookMark = basename(__FILE__, '.php'); ;
-include('includes/header.php');
-
-echo '<p class="page_title_text"><img src="'.$RootPath.'/css/'.$Theme.'/images/inventory.png" title="' . _('Export Sales Analysis Files') .'" alt="" /><b>' . $Title. '</b></p>';
+/* End config */
 
 function stripcomma($str) { //because we're using comma as a delimiter
 	return str_replace(',', '', $str);
 }
 
-echo '<div class="centre">' . _('Making a comma separated values file of the stock items') . '</div>';
+echo '<p class="page_title_text"><img src="'.$RootPath.'/css/'.$Theme.'/images/inventory.png" title="' . __('Export Sales Analysis Files') .'" alt="" /><b>' . $Title. '</b></p>';
 
-$ErrMsg = _('The SQL to get the stock items failed with the message');
+echo '<div class="centre">' . __('Making a comma separated values file of the stock items') . '</div>';
+
+$ErrMsg = __('The SQL to get the stock items failed with the message');
 
 $SQL = "SELECT stockid, categoryid, description FROM stockmaster";
 $Result = DB_query($SQL, $ErrMsg);
@@ -41,9 +45,9 @@ unlink($ItemsFileName);
 
 $fp = fopen($ItemsFileName,'w');
 
-if ($fp==FALSE){
+if ($fp==false){
 
-	prnMsg(_('Could not open or create the file under') . ' ' . $ItemsFileName,'error');
+	prnMsg(__('Could not open or create the file under') . ' ' . $ItemsFileName,'error');
 	include('includes/footer.php');
 	exit();
 }
@@ -58,9 +62,9 @@ while ($MyRow = DB_fetch_row($Result)){
 fclose($fp);
 //Now the customers
 
-echo '<div class="centre">' . _('Making a comma separated values file of the customers') . '</div>';
+echo '<div class="centre">' . __('Making a comma separated values file of the customers') . '</div>';
 
-$ErrMsg = _('The SQL to get the customers failed with the message');
+$ErrMsg = __('The SQL to get the customers failed with the message');
 
 $SQL = "SELECT debtorsmaster.debtorno, debtorsmaster.name, custbranch.branchcode, brname, salestype, area, salesman FROM debtorsmaster INNER JOIN custbranch ON debtorsmaster.debtorno=custbranch.debtorno";
 $Result = DB_query($SQL, $ErrMsg);
@@ -71,9 +75,9 @@ unlink($CustomersFileName);
 
 $fp = fopen($CustomersFileName,'w');
 
-if ($fp==FALSE){
+if ($fp==false){
 
-	prnMsg(_('Could not open or create the file under') . ' ' . $CustomersFileName,'error');
+	prnMsg(__('Could not open or create the file under') . ' ' . $CustomersFileName,'error');
 	include('includes/footer.php');
 	exit();
 }
@@ -89,9 +93,9 @@ fclose($fp);
 
 //Now the sales analysis invoice & credit note lines
 
-echo '<div class="centre">' . _('Making a comma separated values file of the sales lines') . '</div>';
+echo '<div class="centre">' . __('Making a comma separated values file of the sales lines') . '</div>';
 
-$ErrMsg = _('The SQL to get the sales data failed with the message');
+$ErrMsg = __('The SQL to get the sales data failed with the message');
 
 $SQL = "SELECT 	stockmoves.debtorno,
 				stockmoves.branchcode,
@@ -116,9 +120,9 @@ unlink($SalesFileName);
 
 $fp = fopen($SalesFileName,'w');
 
-if ($fp==FALSE){
+if ($fp==false){
 
-	prnMsg(_('Could not open or create the file under') . ' ' . $SalesFileName,'error');
+	prnMsg(__('Could not open or create the file under') . ' ' . $SalesFileName,'error');
 	include('includes/footer.php');
 	exit();
 }
@@ -136,7 +140,9 @@ fclose($fp);
 $conn_id = ftp_connect($FTP_Server);
 
 // login with username and password
-$login_result = ftp_login($conn_id, $FTP_User, $FTP_Password);
+if ($conn_id) {
+	$login_result = ftp_login($conn_id, $FTP_User, $FTP_Password);
+}
 
 // check connection
 if ((!$conn_id) || (!$login_result)) {

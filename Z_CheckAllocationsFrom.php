@@ -1,9 +1,10 @@
 <?php
 
-include('includes/session.php');
-$Title = _('Identify Allocation Stuff Ups');
+require(__DIR__ . '/includes/session.php');
+
+$Title = __('Identify Allocation Stuff Ups');
 $ViewTopic = 'SpecialUtilities';
-$BookMark = basename(__FILE__, '.php'); ;
+$BookMark = basename(__FILE__, '.php');
 include('includes/header.php');
 
 $SQL = "SELECT debtortrans.type,
@@ -30,11 +31,11 @@ $Result = DB_query($SQL);
 if (DB_num_rows($Result)>0){
 	echo '<table>
 			<tr>
-				<td>' . _('Type') . '</td>
-				<td>' . _('Trans No') . '</td>
-				<td>' . _('Ov Amt') . '</td>
-				<td>' . _('Allocated') . '</td>
-				<td>' . _('Tot Allcns') . '</td>
+				<td>' . __('Type') . '</td>
+				<td>' . __('Trans No') . '</td>
+				<td>' . __('Ov Amt') . '</td>
+				<td>' . __('Allocated') . '</td>
+				<td>' . __('Tot Allcns') . '</td>
 			</tr>';
 
 	$RowCounter =0;
@@ -50,17 +51,17 @@ if (DB_num_rows($Result)>0){
 
 		$RowCounter++;
 		if ($RowCounter==20){
-			echo '<tr><td>' . _('Type') . '</td>
-				<td>' . _('Trans No') . '</td>
-				<td>' . _('Ov Amt') . '</td>
-				<td>' . _('Allocated') . '</td>
-				<td>' . _('Tot Allcns') . '</td></tr>';
+			echo '<tr><td>' . __('Type') . '</td>
+				<td>' . __('Trans No') . '</td>
+				<td>' . __('Ov Amt') . '</td>
+				<td>' . __('Allocated') . '</td>
+				<td>' . __('Tot Allcns') . '</td></tr>';
 			$RowCounter=0;
 		}
 	}
 	echo '</table>';
 } else {
-	prnMsg(_('There are no inconsistent allocations') . ' - ' . _('all is well'),'info');
+	prnMsg(__('There are no inconsistent allocations') . ' - ' . __('all is well'),'info');
 }
 
 include('includes/footer.php');

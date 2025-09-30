@@ -1,5 +1,5 @@
 <?php
-// ManualContents.php
+
 /* Shows the local manual content if available, else shows the manual content in en-GB. */
 /* This program is under the GNU General Public License, last version. */
 /* This creative work is under the CC BY-NC-SA, later version. */
@@ -16,7 +16,6 @@ Comments beginning with Help Begin and Help End denote the beginning and end of 
 What section is named after Help Begin: and there can be multiple sections separated with a comma.
 */
 
-// BEGIN: Procedure division ---------------------------------------------------
 $PageSecurity = 0;
 
 // Set the language to show the manual:
@@ -27,9 +26,9 @@ if(isset($_GET['Language'])) {// Set an other language for manual.
 	$Language = $_GET['Language'];
 }
 */
-include('includes/session.php');
+require(__DIR__ . '/includes/session.php');
 
-$Title = _('webERP Manual');
+$Title = __('webERP Manual');
 
 // Set the Cascading Style Sheet for the manual:
 $ManualStyle = 'locale/' . $Language . '/Manual/css/manual.css';
@@ -59,8 +58,8 @@ if (file_exists($ManualHeader)) { // Use locale ManualHeader.html if exists. Eac
 	<body>
 		<div id="pagetitle">', $Title, '</div>
 		<div class="right">
-			<a id="top">&#160;</a><a class="minitext" href="', htmlspecialchars($_SERVER['PHP_SELF'],ENT_QUOTES,'UTF-8'), '">☜ ', _('Table of Contents'), '</a><br />
-			<a class="minitext" href="#bottom">⬇ ', _('Go to Bottom'), '</a>
+			<a id="top">&#160;</a><a class="minitext" href="', htmlspecialchars($_SERVER['PHP_SELF'],ENT_QUOTES,'UTF-8'), '">☜ ', __('Table of Contents'), '</a><br />
+			<a class="minitext" href="#bottom">⬇ ', __('Go to Bottom'), '</a>
 		</div>';
 }
 
@@ -74,10 +73,10 @@ if(((!isset($_POST['Submit'])) and (empty($_GET['ViewTopic']))) || ((isset($_POS
 	// if not submittws then coming into manual to look at TOC
 	// if SelectTableOfContents set then user wants it displayed
 	if(!isset($_POST['Submit'])) {
-		echo '<p>', _('Click on a link to view a page'), '</p>';
+		echo '<p>', __('Click on a link to view a page'), '</p>';
 	}
 	echo '<h1>';
-	echo _('Table of Contents'), '</h1>';
+	echo __('Table of Contents'), '</h1>';
 	$j = 0;
 	foreach($TOC_Array['TableOfContents'] as $Title => $SubLinks) {
 		$Name = 'Select' . $Title;
@@ -104,7 +103,7 @@ if(((!isset($_POST['Submit'])) and (empty($_GET['ViewTopic']))) || ((isset($_POS
 		++$j;
 	}
 	echo '</ul>',
-		'<p><input type="submit" name="Submit" value="', _('Display Checked'), '" /></p>',
+		'<p><input type="submit" name="Submit" value="', __('Display Checked'), '" /></p>',
 		'</form>';
 }
 
@@ -114,14 +113,14 @@ if(!isset($_GET['ViewTopic'])) {
 
 foreach($TOC_Array['TableOfContents'] as $Name => $FullName) {
 	$PostName = 'Select' . $Name;
-	if(($_GET['ViewTopic'] == $Name) or (isset($_POST[$PostName]))) {
-		if($Name == 'APIFunctions') {
+	if (($_GET['ViewTopic'] == $Name) or (isset($_POST[$PostName]))) {
+		if ($Name == 'APIFunctions') {
 			$Name .= '.php';
 		} else {
 			$Name .= '.html';
 		}
 		$ManualPage = 'locale/' . $Language . '/Manual/Manual' . $Name;
-		if(!file_exists($ManualPage)) {// If locale topic page not exist, use topic page in doc/Manual.
+		if (!file_exists($ManualPage)) {// If locale topic page not exist, use topic page in doc/Manual.
 			$ManualPage = 'doc/Manual/Manual' . $Name;
 		}
 		echo '<div id="manualpage">';
@@ -136,12 +135,11 @@ if(file_exists($ManualFooter)) {// Use locale ManualHeader.html if exists. Each 
 	include($ManualFooter);
 } else {// Default page footer:
 	echo '<div class="right">
-			<a id="bottom">&#160;</a><a class="minitext" href="#top">⬆ ', _('Go to Top'), '</a><br />
-			<a id="top">&#160;</a><a class="minitext" href="', htmlspecialchars($_SERVER['PHP_SELF'],ENT_QUOTES,'UTF-8'), '">☜ ', _('Table of Contents'), '</a>
+			<a id="bottom">&#160;</a><a class="minitext" href="#top">⬆ ', __('Go to Top'), '</a><br />
+			<a id="top">&#160;</a><a class="minitext" href="', htmlspecialchars($_SERVER['PHP_SELF'],ENT_QUOTES,'UTF-8'), '">☜ ', __('Table of Contents'), '</a>
 		</div>
 	</body>
 	</html>';
 }
 
 ob_end_flush();
-// END: Procedure division -----------------------------------------------------

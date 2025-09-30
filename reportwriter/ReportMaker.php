@@ -3,20 +3,20 @@
 $DirectoryLevelsDeep = 1;
 $PathPrefix = __DIR__ . '/../';
 
-// TBD The followiung line needs to be replace when more translations are available
-$ReportLanguage = 'en_US';					// default language file
+// Fetch necessary include files - Host application specific (webERP)
+require($PathPrefix . 'includes/session.php');
 
+require_once($PathPrefix . 'includes/DateFunctions.php');
+
+// TBD The following line needs to be replaced when more translations are available
+$ReportLanguage = 'en_US';				// default language file
 define('DBReports','reports');			// name of the databse table holding the main report information (ReportID)
 define('DBRptFields','reportfields');	// name of the database table holding the report fields
 //define('FPDF_FONTPATH','../fonts/');  FPDF path to fonts directory
 
-// Fetch necessary include files - Host application specific (webERP)
-require($PathPrefix . 'includes/session.php');
-require_once($PathPrefix . 'includes/DateFunctions.php');
-
 // Include files for ReportMaker.php
-require('languages/'.$ReportLanguage.'/reports.php'); // include translation before defaults.php
-require('admin/defaults.php'); // load default values
+require(__DIR__ . '/languages/'.$ReportLanguage.'/reports.php'); // include translation before defaults.php
+require(__DIR__ . '/includes/defaults.php'); // load default values
 
 $usrMsg = array(); // setup array for return messages
 if (isset($_GET['reportid'])) { // then entered with report id requested, fix variable to show filter form
